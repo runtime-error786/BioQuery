@@ -1,14 +1,12 @@
-const initialState = 'MUSTAFA'; // Initial state is an empty array
+const initialState = []; // Initialize as an empty array
 
-let Chat = (state = initialState, action) => {
-    if (action.type === "msg") {
-        console.log("read",action.payload)
-        return state = action.payload;
-    }
-    else {
+const Chat = (state = initialState, action) => {
+    switch (action.type) {
+      case "msg":
+        return [...state, action.payload]; // Append new message to the array
+      default:
         return state;
     }
-}
-
-
-export {Chat};
+  };
+  
+  export  {Chat};
