@@ -1,10 +1,14 @@
+// Node.js Server - server.js
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+app.use(cors());
 app.use(bodyParser.json());
 
 // Root route
@@ -15,14 +19,18 @@ app.get('/', (req, res) => {
 // Route to handle asking questions
 app.post('/ask', async (req, res) => {
   try {
-    const { question } = req.body;
-
+    const  question  =  req.body.message;
+    console.log('Received question:', req.body.message);  // Log the received question
+    
     // Make a POST request to Flask API
     const flaskResponse = await axios.post('http://localhost:8080/ask', { question });
-
+    
+    console.log('Flask response:', flaskResponse.data.answer);  // Log the Flask API response
+    
     // Extract the answer from Flask response
-    const { answer } = flaskResponse.data;
-
+    const  answer  = flaskResponse.data.answer;
+    console.log('Answer:', answer);  // Log the extracted answer
+    
     // Respond with the answer
     res.json({ answer });
   } catch (error) {

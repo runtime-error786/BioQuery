@@ -3,9 +3,9 @@ from langchain_community.llms import Ollama
 from langchain.chains import RetrievalQA
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
 import os
+from langchain.prompts import PromptTemplate
+import logging
 
 app = Flask(__name__)
 
@@ -22,23 +22,32 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-
 index_name = "test1"
 vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings, namespace="real")
 
+logging.basicConfig(level=logging.DEBUG)
 
-
-# Route to handle questions
 @app.route('/ask', methods=['POST'])
 def ask_question():
     try:
         data = request.get_json()
+        app.logger.debug(f"Received data: {data}")
+
         question = data['question']
+        app.logger.debug(f"Received question: {question}")
 
-        question_answer_chain = create_stuff_documents_chain(llm, question)
-        chain = create_retrieval_chain(vectorstore.as_retriever(), question_answer_chain)
-        answer = chain.invoke(question)
+        # Create the retrieval chain
+        retrieval_qa_chain = RetrievalQA.from_chain_type(
+            llm=llm,
+            retriever=vectorstore.as_retriever(),
+            chain_type="stuff"  # or any appropriate chain type
+        )
 
-        return jsonify({'answer': answer})
+        # Get the answer from the chain
+        answer = retrieval_qa_chain.invoke(question)
+        app.logger.debug(f"Answer: {answer['result']}")
+
+        return jsonify({'answer': answer['result']})
     except Exception as e:
+        app.logger.error(f"Error: {str(e)}")
         return jsonify({'error': str(e)})
 
-
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port= 8080)
+    app.run(host="0.0.0.0", port=8080, debug=True)

@@ -1,18 +1,22 @@
+import axios from "axios";
+
 export const msg_data = (message) => {
     return async (dispatch) => {
       try {
-        // Simulate sending message to backend or external service
-        // const response = await axios.post('/api/chat', { message });
-        // const reply = response.data.reply;
+        dispatch({
+            type: 'msg',
+            payload: { role: 'user', text: message },
+          });
+
+        const response = await axios.post('http://localhost:5000/ask', { message });
+        const reply = response.data.answer;
+        console.log(reply)
   
         // Dispatch action to add message to Redux state with role identifier
+        
         dispatch({
           type: 'msg',
-          payload: { role: 'user', text: message },
-        });
-        dispatch({
-          type: 'msg',
-          payload: { role: 'bot', text: "yes how i " },
+          payload: { role: 'bot', text: reply },
         });
       } catch (error) {
         console.error('Error:', error);
