@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: Medical
+Version: 0.0.1
+Author: Mustafa Rizwan
+Author-email: mustafa782a@gmail.com
+Requires-Dist: openai
+Requires-Dist: langchain
+Requires-Dist: streamlit
+Requires-Dist: python-dotenv
+Requires-Dist: PyPDF2
+Requires-Dist: pinecone-client
+Requires-Dist: langchain_community
+Requires-Dist: langchain_text_splitters
+Requires-Dist: langchain_pinecone

@@ -1,0 +1,9 @@
+openai
+langchain
+streamlit
+python-dotenv
+PyPDF2
+pinecone-client
+langchain_community
+langchain_text_splitters
+langchain_pinecone
